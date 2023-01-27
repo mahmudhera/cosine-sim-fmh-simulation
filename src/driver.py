@@ -13,10 +13,10 @@ def get_sketch(vector, random_indices):
 def generate_random_indices(num_total_entries, num_random_indices):
     return random.sample(range(num_total_entries), num_random_indices)
 
-def generate_random_vector(num_entries):
+def generate_random_vector(num_entries, p):
     #return np.random.randint(2, size=num_entries)
-    num_ones = 10000
-    num_zeros = 3000
+    num_ones = int(10000*p)
+    num_zeros = int(10000*(1-p))
     return np.random.choice( [0]*num_zeros+[1]*num_ones, num_entries )
 
 def get_squared_length(u):
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     ans = 1.0/2**0.5
     assert ans == get_cosine_similarity(a,b)
 
-    v = generate_random_vector(10)
+    v = generate_random_vector(10, 0.4)
     a = generate_random_indices(10, 4)
     b = generate_random_indices(10, 4)
     c = generate_random_indices(10, 4)
@@ -52,9 +52,15 @@ if __name__ == '__main__':
     print('------- STARTING SIMULATION ---------')
 
     for j in range(20):
-        u = generate_random_vector(num_entries)
-        v = generate_random_vector(num_entries)
+
+        p1 = np.random.uniform()
+        p2 = np.random.uniform()
+
+        u = generate_random_vector(num_entries, p1)
+        v = generate_random_vector(num_entries, p2)
         cosine_original_space = get_cosine_similarity(u, v)
+
+        print(f'Num of kmers in vectors: {sum(u)} and {sum(v)}')
 
         cosine_similarities = []
         for i in range(num_simulations):
@@ -68,8 +74,8 @@ if __name__ == '__main__':
     print('------- STARTING SIMULATION ---------')
 
     for j in range(20):
-        u = generate_random_vector(num_entries)
-        v = generate_random_vector(num_entries)
+        u = generate_random_vector(num_entries, p1)
+        v = generate_random_vector(num_entries, p2)
 
         u_reduced_list = []
         v_reduced_list = []
