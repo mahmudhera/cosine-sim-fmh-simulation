@@ -30,14 +30,14 @@ def get_squared_length(u):
 
 if __name__ == '__main__':
     seed = 0
-    num_entries = 10000
+    num_entries = 100000
     num_simulations = 10000
     np.random.seed(seed)
     random.seed(seed)
 
-    num_ones_u = 5000
-    num_ones_v_low = 1000
-    num_ones_v_high = 10000
+    num_ones_u = 50000
+    num_ones_v_low = 10000
+    num_ones_v_high = 100000
 
     scale_factors = [0.001, 0.01, 0.1]
 
