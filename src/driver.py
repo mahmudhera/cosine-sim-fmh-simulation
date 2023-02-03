@@ -3,9 +3,14 @@ from numpy import dot
 from numpy.linalg import norm
 import random
 from tqdm import tqdm
+from matplotlib import pyplot as plt
+import pandas as pd
 
 def get_cosine_similarity(a, b):
-    return dot(a, b)/(norm(a)*norm(b))
+    try:
+        return dot(a, b)/(norm(a)*norm(b))
+    except:
+        return 0
 
 def get_sketch(vector, random_indices):
     return np.take(vector, random_indices)
@@ -13,78 +18,56 @@ def get_sketch(vector, random_indices):
 def generate_random_indices(num_total_entries, num_random_indices):
     return random.sample(range(num_total_entries), num_random_indices)
 
-def generate_random_vector(num_entries, p):
-    #return np.random.randint(2, size=num_entries)
-    num_ones = int(10000*p)
-    num_zeros = int(10000*(1-p))
-    return np.random.choice( [0]*num_zeros+[1]*num_ones, num_entries )
+def generate_random_vector(num_entries, num_ones):
+    ones = [1] * num_ones
+    zeros = [0] * (num_entries - num_ones)
+    all = ones + zeros
+    random.shuffle(all)
+    return all
 
 def get_squared_length(u):
     return sum( [x**2 for x in u] )
 
 if __name__ == '__main__':
-    seed = 2
-    num_entries = 50000
-    fmh_sketch_size = 100
+    seed = 0
+    num_entries = 100000
     num_simulations = 100000
     np.random.seed(seed)
     random.seed(seed)
 
-    a = np.array([0,1,0])
-    b = np.array([0,0,1])
-    ans = 0
-    assert ans == get_cosine_similarity(a,b)
+    num_ones_u = 50000
+    num_ones_v_low = 10000
+    num_ones_v_high = 100000
 
-    a = np.array([0,1,1])
-    b = np.array([0,0,1])
-    ans = 1.0/2**0.5
-    assert ans == get_cosine_similarity(a,b)
-
-    v = generate_random_vector(10, 0.4)
-    a = generate_random_indices(10, 4)
-    b = generate_random_indices(10, 4)
-    c = generate_random_indices(10, 4)
-
-    print(v, a, get_sketch(v, a))
-    print(v, b, get_sketch(v, b))
-    print(v, c, get_sketch(v, c))
+    scale_factors = [0.00001, 0.0001, 0.001, 0.01, 0.1]
 
     print('------- STARTING SIMULATION ---------')
 
-    for j in range(20):
+    lst = []
 
-        p1 = np.random.uniform()
-        p2 = np.random.uniform()
+    for scale_factor in scale_factors:
+        # simulate hash function, get the indices
+        sketch_size = int(scale_factor * num_entries)
+        indices = generate_random_indices (num_entries, sketch_size)
 
-        u = generate_random_vector(num_entries, p1)
-        v = generate_random_vector(num_entries, p2)
-        cosine_original_space = get_cosine_similarity(u, v)
+        print(f"Running for scale factor: {scale_factor}")
 
-        print(f'Num of kmers in vectors: {sum(u)} and {sum(v)}')
+        for i in tqdm(range(num_simulations)):
+            # generate u and v randomly
+            u = generate_random_vector(num_entries, num_ones_u)
+            num_ones_v = np.random.randint(num_ones_v_low, num_ones_v_high+1)
+            v = generate_random_vector(num_entries, num_ones_v)
 
-        cosine_similarities = []
-        for i in range(num_simulations):
-            indices = generate_random_indices(num_entries, fmh_sketch_size)
+            # get original cosine similarity
+            cosine_original_space = get_cosine_similarity(u, v)
+
+            # get u' and v', and compute their similarity
             u_reduced = get_sketch(u, indices)
             v_reduced = get_sketch(v, indices)
             cosine_similarity_reduced_space = get_cosine_similarity(u_reduced, v_reduced)
-            cosine_similarities.append(cosine_similarity_reduced_space)
-        print( cosine_original_space, np.mean(cosine_similarities), np.var(cosine_similarities) )
 
-    print('------- STARTING SIMULATION ---------')
+            # record original and estimated
+            lst.append( (scale_factor, num_ones_u, num_ones_v, cosine_original_space, cosine_similarity_reduced_space) )
 
-    for j in range(20):
-        u = generate_random_vector(num_entries, p1)
-        v = generate_random_vector(num_entries, p2)
-
-        u_reduced_list = []
-        v_reduced_list = []
-        for i in range(num_simulations):
-            indices = generate_random_indices(num_entries, fmh_sketch_size)
-            u_reduced = get_sketch(u, indices)
-            v_reduced = get_sketch(v, indices)
-            u_reduced_list.append(u_reduced)
-            v_reduced_list.append(v_reduced)
-
-        print( get_squared_length(u), np.mean( [get_squared_length(vector) for vector in u_reduced_list] ) )
-        print( get_squared_length(v), np.mean( [get_squared_length(vector) for vector in v_reduced_list] ) )
+    df = pd.DataFrame(lst, columns=['s', 'size_u', 'size_v', 'cos_org', 'cos_fmh'])
+    df.to_csv('cosine_simulation_results')
