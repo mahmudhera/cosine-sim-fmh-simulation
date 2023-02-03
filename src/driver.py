@@ -39,7 +39,7 @@ if __name__ == '__main__':
     num_ones_v_low = 10000
     num_ones_v_high = 100000
 
-    scale_factors = [0.001, 0.01, 0.1]
+    scale_factors = [0.00001, 0.0001, 0.001, 0.01, 0.1]
 
     print('------- STARTING SIMULATION ---------')
 
