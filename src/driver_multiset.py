@@ -28,7 +28,7 @@ def generate_random_binary_vector(num_entries, num_ones):
 def generate_random_multi_vector(num_entries, max_value):
     # will generate a random vector with values (0,1,2,...,max_value-1)
     # these values all are equally likely if distr
-    return random.sample(range(0, max_value)*(int(num_entries/max_value)+2), num_entries)
+    return random.sample(list(range(0, max_value))*(int(num_entries/max_value)+2), num_entries)
 
 def get_squared_length(u):
     return sum( [x**2 for x in u] )
