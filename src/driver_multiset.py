@@ -59,9 +59,9 @@ if __name__ == '__main__':
 
         for i in tqdm(range(num_simulations)):
             # generate u and v randomly
-            u = generate_random_vector(num_entries, max_value_u)
+            u = generate_random_multi_vector(num_entries, max_value_u)
             max_value_v = np.random.randint(max_value_v_low, max_value_v_high+1)
-            v = generate_random_vector(num_entries, max_value_v)
+            v = generate_random_multi_vector(num_entries, max_value_v)
 
             # get original cosine similarity
             cosine_original_space = get_cosine_similarity(u, v)
