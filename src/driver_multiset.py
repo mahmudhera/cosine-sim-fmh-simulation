@@ -35,16 +35,16 @@ def get_squared_length(u):
 
 if __name__ == '__main__':
     seed = 0
-    num_entries = 1000
-    num_simulations = 1000
+    num_entries = 10000
+    num_simulations = 10000
     np.random.seed(seed)
     random.seed(seed)
 
-    max_value_u = 70
+    max_value_u = 100
     max_value_v_low = 50
-    max_value_v_high = 90
+    max_value_v_high = 150
 
-    scale_factors = [0.00001, 0.0001, 0.001, 0.01, 0.1]
+    scale_factors = [0.0001, 0.001, 0.01, 0.1]
 
     print('------- STARTING SIMULATION ---------')
 
