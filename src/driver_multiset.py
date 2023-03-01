@@ -78,7 +78,7 @@ if __name__ == '__main__':
             cosine_similarity_reduced_space = get_cosine_similarity(u_reduced, v_reduced)
 
             # record original and estimated
-            lst.append( (scale_factor, max_value_u, max_value_v, cosine_original_space, cosine_similarity_reduced_space) )
+            lst.append( (scale_factor, max_value_u, max_value_v, num_zeros_v, cosine_original_space, cosine_similarity_reduced_space) )
 
-    df = pd.DataFrame(lst, columns=['s', 'max_val_u', 'max_val_v', 'cos_org', 'cos_fmh'])
+    df = pd.DataFrame(lst, columns=['s', 'max_val_u', 'max_val_v', 'num_zeros_v', 'cos_org', 'cos_fmh'])
     df.to_csv('cosine_simulation_results_multiset')
