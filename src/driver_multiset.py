@@ -25,10 +25,15 @@ def generate_random_binary_vector(num_entries, num_ones):
     random.shuffle(all)
     return all
 
-def generate_random_multi_vector(num_entries, max_value):
+def generate_random_multi_vector(num_entries, max_value, num_zeros=0):
     # will generate a random vector with values (0,1,2,...,max_value-1)
     # these values all are equally likely if distr
-    return random.sample(list(range(0, max_value))*(int(num_entries/max_value)+2), num_entries)
+    zeros = [0] * num_zeros
+    num_non_zero_entries = max(num_entries-num_zeros, 0)
+    non_zeros = random.sample(list(range(1, max_value+1))*(int(num_non_zero_entries/max_value)+2), num_non_zero_entries)
+    all = zeros + non_zeros
+    random.shuffle(all)
+    return all
 
 def get_squared_length(u):
     return sum( [x**2 for x in u] )
@@ -61,7 +66,8 @@ if __name__ == '__main__':
             # generate u and v randomly
             u = generate_random_multi_vector(num_entries, max_value_u)
             max_value_v = np.random.randint(max_value_v_low, max_value_v_high+1)
-            v = generate_random_multi_vector(num_entries, max_value_v)
+            num_zeros_v = np.random.randint(0, num_entries+1)
+            v = generate_random_multi_vector(num_entries, max_value_v, num_zeros=num_zeros_v)
 
             # get original cosine similarity
             cosine_original_space = get_cosine_similarity(u, v)

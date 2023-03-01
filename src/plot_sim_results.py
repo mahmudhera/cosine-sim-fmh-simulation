@@ -6,7 +6,7 @@ plt.rcParams["font.family"] = "tahoma"
 plt.rcParams['font.size'] = 11
 
 if __name__ == "__main__":
-    df = pd.read_csv('cosine_simulation_results')
+    df = pd.read_csv('cosine_simulation_results_multiset')
     fig, axs = plt.subplots(2, 2, sharey=True)
     a, b = min(df['cos_org'].tolist()), max(df['cos_org'].tolist())
 
@@ -21,4 +21,4 @@ if __name__ == "__main__":
     fig.suptitle('Estimated cosine similarity for various scale factors', fontsize=11)
     plt.subplots_adjust(hspace=0.5)
 
-    plt.savefig('true_vs_fmh_cosine.pdf')
+    plt.savefig('true_vs_fmh_cosine_multiset.pdf')
